@@ -60,7 +60,6 @@ class Pix2Pix3dModel(BaseModel):
         input_B = input['B' if AtoB else 'A']
         self.input_A.resize_(input_A.size()).copy_(input_A)
         self.input_B.resize_(input_B.size()).copy_(input_B)
-        #self.image_paths = input['A_paths' if AtoB else 'B_paths']
 
     def forward(self):
         self.real_A = Variable(self.input_A)
@@ -76,7 +75,6 @@ class Pix2Pix3dModel(BaseModel):
     # get image paths
     def get_image_paths(self):
         return "blksdf"
-        #return self.image_paths
 
     def backward_D(self):
         # Fake
