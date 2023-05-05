@@ -19,22 +19,26 @@ You will have to align your paired dataset in the following way:
 
 ```
 input_path/dataroot/
-  ├── trainA
+  ├── trainA/
     ├── image1.png
     ├── image2.png
     ├── ...
-  ├── trainB
+  ├── trainB/
     ├── mask1.png
     ├── mask2.png
     ├── ...
-  ├── testA
-  ├── testB
+  ├── testA/
+    ├── test_image1.png
+  ├── testB/
+    ├── test_mask1.png
 ```
 
 
 ## Training
 
-
+```
+pyhton train.py --dataroot (path to your dataroot folder) --batchSize 2 --depthSize 32 --input_nc 1 --output_nc 1 --which_model_netG unet_256 --which_model_netD n_layers --name (experiment name) --dataset_mode nodule --model pix2pix3d --nThreads 4 --no_flip --loadSize 256 --fineSize 256 --niter 100 --niter_decay 100 --pool_size 50 --norm batch --which_direction AtoB
+```
 
 
 ## Inference
