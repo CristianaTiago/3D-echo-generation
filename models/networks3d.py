@@ -39,16 +39,16 @@ def define_G(input_nc, output_nc, ngf, which_model_netG, norm='batch', use_dropo
     if use_gpu:
         assert(torch.cuda.is_available())
 
-    #if which_model_netG == 'resnet_9blocks':
-    #     netG = ResnetGenerator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=9, gpu_ids=gpu_ids)
-    # elif which_model_netG == 'resnet_6blocks':
-    #     netG = ResnetGenerator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=6, gpu_ids=gpu_ids)
-    # elif which_model_netG == 'unet_128':
-    #     netG = UnetGenerator3d(input_nc, output_nc, 5, ngf, norm_layer=norm_layer, use_dropout=use_dropout, gpu_ids=gpu_ids)
+    if which_model_netG == 'resnet_9blocks':
+         netG = ResnetGenerator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=9, gpu_ids=gpu_ids)
+     elif which_model_netG == 'resnet_6blocks':
+         netG = ResnetGenerator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=6, gpu_ids=gpu_ids)
+     elif which_model_netG == 'unet_128':
+         netG = UnetGenerator3d(input_nc, output_nc, 5, ngf, norm_layer=norm_layer, use_dropout=use_dropout, gpu_ids=gpu_ids)
     if which_model_netG == 'unet_256':
         netG = UNet(input_nc, output_nc, 5)
-    #elif which_model_netG == 'vnet':
-    #    netG = VNet(elu=False, nll=True)
+    elif which_model_netG == 'vnet':
+        netG = VNet(elu=False, nll=True)
     else:
         raise NotImplementedError('Generator model name [%s] is not recognized' % which_model_netG)
     if len(gpu_ids) > 0:
@@ -134,122 +134,7 @@ class GANLoss(nn.Module):
         return self.loss(input, target_tensor)
 
     
-# Defines the Unet generator.
-# |num_downs|: number of downsamplings in UNet. For example,
-# if |num_downs| == 7, image of size 128x128 will become of size 1x1
-# at the bottleneck
-# class UnetGenerator(nn.Module):
-#     def __init__(self, input_nc, output_nc, num_downs, ngf=64,
-#                  norm_layer=nn.BatchNorm3d, use_dropout=False, gpu_ids=[]):
-#         super(UnetGenerator, self).__init__()
-#         self.gpu_ids = gpu_ids
-#
-#         # currently support only input_nc == output_nc
-#         assert(input_nc == output_nc)
-#
-#         # construct unet structure
-#         unet_block = UnetSkipConnectionBlock(ngf * 8, ngf * 8, norm_layer=norm_layer, innermost=True)
-#         for i in range(num_downs - 5):
-#             unet_block = UnetSkipConnectionBlock(ngf * 8, ngf * 8, unet_block, norm_layer=norm_layer, use_dropout=use_dropout)
-#         unet_block = UnetSkipConnectionBlock(ngf * 4, ngf * 8, unet_block, norm_layer=norm_layer)
-#         unet_block = UnetSkipConnectionBlock(ngf * 2, ngf * 4, unet_block, norm_layer=norm_layer)
-#         unet_block = UnetSkipConnectionBlock(ngf, ngf * 2, unet_block, norm_layer=norm_layer)
-#         unet_block = UnetSkipConnectionBlock(output_nc, ngf, unet_block, outermost=True, norm_layer=norm_layer)
-#
-#         self.model = unet_block
-#
-#     def forward(self, input):
-#         if self.gpu_ids and isinstance(input.data, torch.cuda.FloatTensor):
-#             return nn.parallel.data_parallel(self.model, input, self.gpu_ids)
-#         else:
-#             return self.model(input)
-
-#############################
-#
-# 3D version of UnetGenerator
-# class UnetGenerator3d(nn.Module):
-#     def __init__(self, input_nc, output_nc, num_downs, ngf=64,
-#                  norm_layer=nn.BatchNorm3d, use_dropout=False, gpu_ids=[]): # TODO
-#         super(UnetGenerator3d, self).__init__()
-#         self.gpu_ids = gpu_ids
-#
-#         # currently support only input_nc == output_nc
-#         assert(input_nc == output_nc)
-#
-#         # construct unet structure
-#         unet_block = UnetSkipConnectionBlock3d(ngf * 8, ngf * 8, norm_layer=norm_layer, innermost=True)
-#         for i in range(num_downs - 5):
-#             unet_block = UnetSkipConnectionBlock3d(ngf * 8, ngf * 8, unet_block, norm_layer=norm_layer, use_dropout=use_dropout)
-#         unet_block = UnetSkipConnectionBlock3d(ngf * 4, ngf * 8, unet_block, norm_layer=norm_layer)
-#         unet_block = UnetSkipConnectionBlock3d(ngf * 2, ngf * 4, unet_block, norm_layer=norm_layer)
-#         unet_block = UnetSkipConnectionBlock3d(ngf, ngf * 2, unet_block, norm_layer=norm_layer)
-#         unet_block = UnetSkipConnectionBlock3d(output_nc, ngf, unet_block, outermost=True, norm_layer=norm_layer)
-#
-#         self.model = unet_block
-#
-#     def forward(self, input):
-#         if self.gpu_ids and isinstance(input.data, torch.cuda.FloatTensor):
-#             return nn.parallel.data_parallel(self.model, input, self.gpu_ids)
-#         else:
-#             return self.model(input)
-#
-# # Defines the submodule with skip connection.
-# # X -------------------identity---------------------- X
-# #   |-- downsampling -- |submodule| -- upsampling --|
-# class UnetSkipConnectionBlock3d(nn.Module):
-#     def __init__(self, outer_nc, inner_nc,
-#                  submodule=None, outermost=False, innermost=False, norm_layer=nn.BatchNorm3d, use_dropout=False):
-#         super(UnetSkipConnectionBlock3d, self).__init__()
-#         self.outermost = outermost
-#         if type(norm_layer) == functools.partial:
-#             use_bias = norm_layer.func == nn.InstanceNorm3d
-#         else:
-#             use_bias = norm_layer == nn.InstanceNorm3d
-#
-#         downconv = nn.Conv3d(outer_nc, inner_nc, kernel_size=2,
-#                              stride=2, padding=1, bias=use_bias)
-#         downrelu = nn.LeakyReLU(0.2, True)
-#         downnorm = norm_layer(inner_nc)
-#         uprelu = nn.ReLU(True)
-#         upnorm = norm_layer(outer_nc)
-#
-#         if outermost:
-#             upconv = nn.ConvTranspose3d(inner_nc * 2, outer_nc,
-#                                         kernel_size=2, stride=2,
-#                                         padding=1, output_padding=1)
-#             down = [downconv]
-#             up = [uprelu, upconv, nn.Tanh()]
-#             model = down + [submodule] + up
-#         elif innermost:
-#             upconv = nn.ConvTranspose3d(inner_nc, outer_nc,
-#                                         kernel_size=2, stride=2,
-#                                         padding=1, bias=use_bias, output_padding=1)
-#             down = [downrelu, downconv]
-#             up = [uprelu, upconv, upnorm]
-#             model = down + up
-#         else:
-#             upconv = nn.ConvTranspose3d(inner_nc * 2, outer_nc,
-#                                         kernel_size=2, stride=2,
-#                                         padding=1, bias=use_bias)
-#             down = [downrelu, downconv, downnorm]
-#             up = [uprelu, upconv, upnorm]
-#
-#             if use_dropout:
-#                 model = down + [submodule] + up + [nn.Dropout(0.5)]
-#             else:
-#                 model = down + [submodule] + up
-#
-#         self.model = nn.Sequential(*model)
-#
-#     def forward(self, x):
-#         print(self.model(x).shape, x.shape)
-#         if self.outermost:
-#             return self.model(x)
-#         else:
-#             print(self.model.modules())
-#             return torch.cat([self.model(x), x], 1)
-#
-# # Defines the PatchGAN discriminator with the specified arguments.
+# Defines the PatchGAN discriminator with the specified arguments.
 class NLayerDiscriminator(nn.Module):
     def __init__(self, input_nc, ndf=64, n_layers=3, norm_layer=nn.BatchNorm3d, use_sigmoid=False, gpu_ids=[]):
         super(NLayerDiscriminator, self).__init__()
@@ -341,6 +226,7 @@ def conv_block_2_3d(in_dim, out_dim, activation):
         activation)
 
 
+# Defines the Unet generator.
 class UNet(nn.Module):
     def __init__(self, in_dim, out_dim, num_filters):
         super(UNet, self).__init__()
@@ -383,37 +269,22 @@ class UNet(nn.Module):
     def forward(self, x):
         # Down sampling
         down_1 = self.down_1(x)  # -> [1, 4, 128, 128, 128]
-        #print('down_1 =', down_1.shape)
         pool_1 = self.pool_1(down_1)  # -> [1, 4, 64, 64, 64]
-        #print('pool_1 =', pool_1.shape)
         down_2 = self.down_2(pool_1)  # -> [1, 8, 64, 64, 64]
-        #print('down_2 =', down_2.shape)
         pool_2 = self.pool_2(down_2)  # -> [1, 8, 32, 32, 32]
-        #print('pool_2 =', pool_2.shape)
         down_3 = self.down_3(pool_2)  # -> [1, 16, 32, 32, 32]
-        #print('down_3 =', down_3.shape)
         pool_3 = self.pool_3(down_3)  # -> [1, 16, 16, 16, 16]
-        #print('pool_3 =', pool_3.shape)
         down_4 = self.down_4(pool_3)  # -> [1, 32, 16, 16, 16]
-        #print('down_4 =', down_4.shape)
         pool_4 = self.pool_4(down_4)  # -> [1, 32, 8, 8, 8]
-        #print('pool_4 =', pool_4.shape)
         down_5 = self.down_5(pool_4)  # -> [1, 64, 8, 8, 8]
-        #print('down_5 =', down_5.shape)
         pool_5 = self.pool_5(down_5)  # -> [1, 64, 4, 4, 4]
-        #print('pool_5 =', pool_5.shape)
         # Bridge
         bridge = self.bridge(pool_5)  # -> [1, 128, 4, 4, 4]
-        #print('bridge =', bridge.shape)
         # Up sampling
         trans_1 = self.trans_1(bridge)
-        #print('trans_1 =', trans_1.shape)# -> [1, 128, 8, 8, 8]
         concat_1 = torch.cat([trans_1, down_5], dim=1)  # -> [1, 192, 8, 8, 8]
-        #print('concat_1 =', concat_1.shape)
         up_1 = self.up_1(concat_1)  # -> [1, 64, 8, 8, 8]
-        #print('up_1 =', up_1.shape)
         trans_2 = self.trans_2(up_1)  # -> [1, 64, 16, 16, 16]
-        #print(trans_2.shape, down_4.shape)
         concat_2 = torch.cat([trans_2, down_4], dim=1)  # -> [1, 96, 16, 16, 16]
         up_2 = self.up_2(concat_2)  # -> [1, 32, 16, 16, 16]
 
