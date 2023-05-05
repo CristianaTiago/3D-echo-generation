@@ -48,3 +48,20 @@ pyhton train.py --dataroot (path to your dataroot folder) --batchSize 2 --depthS
 ```
 pyhton test.py --dataroot (path to your dataroot folder)  --results_dir (path where to save the generated images) --ntest 1 --how_many 1 --batchSize 1 --depthSize 32 --input_nc 1 --output_nc 1 --which_model_netG unet_256 --which_model_netD n_layers --name (experiment name) --dataset_mode single --model test --nThreads 4 --no_flip --loadSize 256 --fineSize 256 --norm batch --which_direction AtoB --which_epoch 50
 ```
+
+##Citation
+
+Please acknowledge this work and cite the paper as:
+
+```
+@article{tiago_data_2022,
+	       title = {A Data Augmentation Pipeline to Generate Synthetic Labeled Datasets of 3D Echocardiography Images Using a GAN},
+	       volume = {10},
+	       issn = {2169-3536},
+	       doi = {10.1109/ACCESS.2022.3207177},
+	       journal = {IEEE Access},
+	       author = {Tiago, Cristiana and Gilbert, Andrew and Beela, Ahmed Salem and Aase, Svein Arne and Snare, Sten Roar and Šprem, Jurica and McLeod, Kristin},
+	       year = {2022},
+	       pages = {98803--98815}
+        }
+```
