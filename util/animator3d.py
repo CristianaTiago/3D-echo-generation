@@ -122,3 +122,5 @@ if __name__ == "__main__":
 
     animator = MedicalImageAnimator(image, [], 0, save=False)
     animate = animator.run()
+
+    
