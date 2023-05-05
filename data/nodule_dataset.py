@@ -69,8 +69,6 @@ class NoduleDataset(BaseDataset):
         index = random.randint(0, len(self.A_path) - 1)
         A_path = self.A_path[index]
         B_path = self.B_path[index]
-        #print("real: ", A_path)
-        #print("label: ", B_path)
 
         stacked_A = []
         stacked_B = []
@@ -91,14 +89,8 @@ class NoduleDataset(BaseDataset):
 
 
         random_noise = random.uniform(0, 0.05)
-        #random_rotate = random.uniform(0, 1)
-        #random_probability_rotation = random.randint(0, 1)
         random_probability_noise = random.randint(0, 1)
-        self.transform_da = A.Compose([
-            #A.Rotate(limit=(random_rotate, random_rotate), p=random_probability_rotation,
-            #         interpolation=cv2.INTER_NEAREST),
-            A.GaussNoise(var_limit=(random_noise, random_noise), p=random_probability_noise)
-        ])
+        self.transform_da = A.GaussNoise(var_limit=(random_noise, random_noise), p=random_probability_noise)
 
         stacked_A_augmented = []
         stacked_B_augmented = []
@@ -120,7 +112,6 @@ class NoduleDataset(BaseDataset):
         return {
                 'A' : imageA_tensor,
                 'B' : imageB_tensor,
-                #'A_paths': A_path, 'B_paths': B_path
                 }
 
     def __len__(self):
