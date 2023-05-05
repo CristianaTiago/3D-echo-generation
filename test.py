@@ -24,7 +24,6 @@ if __name__ == '__main__':
     webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.which_epoch))
     # test
     for i, data in enumerate(dataset):
-        #print(data['A'].shape)
         print(data['A_paths'])
         if i >= opt.how_many:
             break
