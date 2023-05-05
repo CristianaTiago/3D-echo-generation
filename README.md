@@ -11,6 +11,9 @@ The generative model relies on a 3D version of the original [pix2pix](https://gi
 
 At inference time, the input is an anatomical mask of different cardiac structures and the output is the corresponding synthetic 3D echocardiography image.
 
+After cloning this repository and to use the scripts, it is recommended to create a conda environment, activate it, and then install the required libraries.
+
+
 For the 3D segmentation task, please see the original [nnU-Net](https://github.com/MIC-DKFZ/nnUNet) repository.
 
 ![3D echocardiography generation](figures/diagram_IEEE_access_July22.png)
@@ -37,6 +40,8 @@ input_path/dataroot/
 
 
 ## Training
+
+This code was tested on Ubuntu 20.04 and an NVIDIA GeForce RTX 2080 Ti GPU. Furthermore it was developed using Python v3.6.
 
 ```
 pyhton train.py --dataroot (path to your dataroot folder) --batchSize 2 --depthSize 32 --input_nc 1 --output_nc 1 --which_model_netG unet_256 --which_model_netD n_layers --name (experiment name) --dataset_mode nodule --model pix2pix3d --nThreads 4 --no_flip --loadSize 256 --fineSize 256 --niter 100 --niter_decay 100 --pool_size 50 --norm batch --which_direction AtoB
