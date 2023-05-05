@@ -14,6 +14,24 @@ At inference time, the input is an anatomical mask of different cardiac structur
 ![3D echocardiography generation](figures/diagram_IEEE_access_July22.png)
 
 
+## Dataset
+You will have to align your paired dataset in the following way:
+
+```
+input_path/dataroot/
+  ├── trainA
+    ├── image1.png
+    ├── image2.png
+    ├── ...
+  ├── trainB
+    ├── mask1.png
+    ├── mask2.png
+    ├── ...
+  ├── testA
+  ├── testB
+```
+
+
 ## Training
 
 
