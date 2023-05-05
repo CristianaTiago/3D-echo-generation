@@ -19,12 +19,10 @@ if __name__ == '__main__':
         epoch_start_time = time.time()
         epoch_iter = 0
         for i, data in enumerate(dataset):
-            #print(i)
             iter_start_time = time.time()
             total_steps += opt.batchSize
             epoch_iter += opt.batchSize
             model.set_input(data)
-            #print('pseudo: ', data['A'].shape, ', real: ', data['B'].shape)
             model.optimize_parameters()
 
             if total_steps % opt.display_freq == 0:
