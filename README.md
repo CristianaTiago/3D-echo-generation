@@ -11,6 +11,8 @@ The generative model relies on a 3D version of the original [pix2pix](https://gi
 
 At inference time, the input is an anatomical mask of different cardiac structures and the output is the corresponding synthetic 3D echocardiography image.
 
+For the 3D segmentation task, please see the original [nnU-Net](https://github.com/MIC-DKFZ/nnUNet) repository.
+
 ![3D echocardiography generation](figures/diagram_IEEE_access_July22.png)
 
 
