@@ -76,3 +76,5 @@ class BaseOptions():
                 opt_file.write('%s: %s\n' % (str(k), str(v)))
             opt_file.write('-------------- End ----------------\n')
         return self.opt
+
+    
